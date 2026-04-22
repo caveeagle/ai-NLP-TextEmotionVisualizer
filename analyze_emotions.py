@@ -2,10 +2,10 @@ from transformers import pipeline
 from transformers import logging as tf_logging
 import re
 
-
 # ====================================================
 # Emotion color palette (Plutchik Wheel)
 # ====================================================
+
 EMOTION_COLORS = {
     'anger':    '#FF0000',  # Red - aggression
     'disgust':  '#8B4513',  # Brown - repulsion
