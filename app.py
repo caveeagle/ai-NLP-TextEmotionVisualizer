@@ -1,11 +1,25 @@
 import streamlit as st
 import numpy as np
+
+####################################################
+import os
+os.environ["TRANSFORMERS_NO_ADVISORY_WARNINGS"] = "1"
+
+import warnings
+warnings.filterwarnings("ignore", message=".*Accessing.*__path__.*")
+
+import logging
+logging.getLogger("transformers").setLevel(logging.ERROR)
+
+####################################################
+
 from PIL import Image, ImageDraw
 from analyze_emotions import analyze_emotions
 
 # ====================================================
 # Page config
 # ====================================================
+
 st.set_page_config(page_title="Text Emotion Visualizer", layout="centered")
 st.title("Text Emotion Visualizer")
 
