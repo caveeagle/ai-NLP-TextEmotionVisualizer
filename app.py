@@ -149,8 +149,9 @@ col_analyze, col_sample, col_clear = st.columns([2, 1, 1])
 
 with col_analyze:
     if st.button("Analyze emotions", type="primary"):
-        st.session_state.emotions = analyze_emotions(user_text)
-        st.session_state.user_text = user_text
+        with st.spinner("AI is thinking........."):
+            st.session_state.emotions = analyze_emotions(user_text)
+            st.session_state.user_text = user_text
         st.rerun()
 
 with col_sample:
