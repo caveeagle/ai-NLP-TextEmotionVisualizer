@@ -21,7 +21,60 @@ from analyze_emotions import analyze_emotions
 # ====================================================
 
 st.set_page_config(page_title="Text Emotion Visualizer", layout="centered")
-st.title("Text Emotion Visualizer")
+
+EMOTION_COLORS = {
+    'anger':    '#FF0000',
+    'disgust':  '#8B4513',
+    'fear':     '#4B0082',
+    'joy':      '#FFD700',
+    'neutral':  '#808080',
+    'sadness':  '#0000FF',
+    'surprise': '#FFA500',
+}
+
+colors = list(EMOTION_COLORS.values())
+title = "Text Emotion Visualizer"
+
+words = title.split()
+emotion_names = list(EMOTION_COLORS.keys())
+word_spans = []
+for i, word in enumerate(words):
+    color = colors[i % len(colors)]
+    label = emotion_names[i % len(emotion_names)]
+    word_spans.append(
+        f'<span title="{label}" style="color:{color}; cursor:help;">{word}</span>'
+    )
+
+st.markdown(
+    f'<h1 style="text-align:center; font-size:2.8rem;">{" ".join(word_spans)}</h1>',
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <div style="
+        border: 2px solid #2E8B57;
+        border-radius: 8px;
+        padding: 1em 1.2em;
+        margin: 0.5em auto 1.5em;
+        max-width: 700px;
+        background-color: rgba(46, 139, 87, 0.05);
+    ">
+        <p style="
+            color: #1B2A4A;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin: 0;
+        ">
+            Paste your English text and the model will detect the
+            emotional tone of each sentence — from joy and surprise
+            to anger and sadness. The results will be displayed as
+            a color-coded emotion map with a per-sentence breakdown.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # ====================================================
 # Load default text from file
