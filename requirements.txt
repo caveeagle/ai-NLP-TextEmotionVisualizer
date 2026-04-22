@@ -1,5 +1,3 @@
-torch>=2.4
 transformers
-torchvision
 streamlit
 pillow
