@@ -17,7 +17,7 @@ DEBUG = 1
 with open(file_path, 'r', encoding='utf-8') as f:
     raw_text = f.read()
 
-tokenizer = RobertaTokenizer.from_pretrained(model_name)
+tokenizer = RobertaTokenizer.from_pretrained("./model")
 
 # ====================================================
 # Tokenization using Byte-Pair Encoding (BPE)
@@ -35,7 +35,7 @@ eos_token = tokenizer.eos_token  # </s>  — end of sequence
 
 tokens_with_special = [bos_token] + tokens + [eos_token]
 
-if(DEBUG):
+if(0):
     print('=' * 60)
     print('STEP 2 — SPECIAL TOKENS')
     print('=' * 60)
@@ -80,12 +80,8 @@ attention_mask = [1] * real_token_count + [0] * num_padded
 # ====================================================
 
 if(DEBUG):
-    print('=' * 60)
-    print('RESULT')
-    print('=' * 60)
     print(f'input_ids      — length {len(input_ids)}')
     print(f'attention_mask  — length {len(attention_mask)}')
-    print()
     print('Both arrays are ready to be passed into the RoBERTa model.')
 
 ######################################################
@@ -100,7 +96,8 @@ if(DEBUG):
 # ----------------------------------------------------
 # Load a pre-trained RoBERTa model fine-tuned for emotion classification
 
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained("./model")
+
 model.eval()  # switch to inference mode (disable dropout etc.)
 
 # Convert lists to PyTorch tensors and add batch dimension
@@ -137,15 +134,17 @@ id2label = model.config.id2label  # e.g. {0: 'anger', 1: 'disgust', ...}
 # ----------------------------------------------------
 sorted_indices = torch.argsort(probabilities, descending=True)
 
-print('=' * 60)
-print('  EMOTIONS  ')
-print('=' * 60)
-
-for rank, idx in enumerate(sorted_indices, start=1):
-    label = id2label[idx.item()]
-    prob = probabilities[idx].item()
-    marker = ' <-- TOP' if rank <= 2 else ''
-    print(f'  {rank}. {label:<12s}  {prob:.4f}  ({prob * 100:.1f}%){marker}')
+if(DEBUG):
+    
+    print('=' * 60)
+    print('  EMOTIONS  ')
+    print('=' * 60)
+    
+    for rank, idx in enumerate(sorted_indices, start=1):
+        label = id2label[idx.item()]
+        prob = probabilities[idx].item()
+        marker = ' <-- TOP' if rank <= 2 else ''
+        print(f'  {rank}. {label:<12s}  {prob:.4f}  ({prob * 100:.1f}%){marker}')
 
 # Save top-1 and top-2 for future color mapping
 top1_idx = sorted_indices[0].item()
@@ -159,6 +158,10 @@ print()
 print(f'Primary emotion:   {top1_emotion} ({top1_prob * 100:.1f}%)')
 print(f'Secondary emotion: {top2_emotion} ({top2_prob * 100:.1f}%)')
 print()
+
+if(0):
+    tokenizer.save_pretrained("./model")
+    model.save_pretrained("./model")
 
 print(f'Job finished')
 
