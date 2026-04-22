@@ -10,14 +10,14 @@ file_path = 'relevant_text.txt'
 
 model_name = 'j-hartmann/emotion-english-distilroberta-base'
 
-DEBUG = 1
+DEBUG = 0
 
 ##########################################
 
 with open(file_path, 'r', encoding='utf-8') as f:
     raw_text = f.read()
 
-tokenizer = RobertaTokenizer.from_pretrained("./model")
+tokenizer = RobertaTokenizer.from_pretrained('./model')
 
 # ====================================================
 # Tokenization using Byte-Pair Encoding (BPE)
@@ -28,23 +28,22 @@ if(DEBUG):
     print(f'\nTotal number of tokens: {len(tokens)}\n')
 
 # ====================================================
+# Check: minimum token count
+# ====================================================
+MIN_TOKENS = 5
+
+if len(tokens) < MIN_TOKENS:
+    print(f'ERROR: Text is too short ({len(tokens)} tokens). '
+          f'Minimum required: {MIN_TOKENS}.')
+    exit(1)
+    
+# ====================================================
 # STEP 2. Add special markers <s> and </s>
 # ====================================================
 bos_token = tokenizer.bos_token  # <s>   — beginning of sequence
 eos_token = tokenizer.eos_token  # </s>  — end of sequence
 
 tokens_with_special = [bos_token] + tokens + [eos_token]
-
-if(0):
-    print('=' * 60)
-    print('STEP 2 — SPECIAL TOKENS')
-    print('=' * 60)
-    print(f'Beginning-of-sequence token: {bos_token}')
-    print(f'End-of-sequence token:       {eos_token}')
-    print(f'Tokens after adding markers (first 5):  {tokens_with_special[:5]}')
-    print(f'Tokens after adding markers (last 5):   {tokens_with_special[-5:]}')
-    print(f'Total token count (with markers): {len(tokens_with_special)}')
-    print()
 
 # ====================================================
 # STEP 3. Convert tokens to numeric IDs
@@ -96,7 +95,7 @@ if(DEBUG):
 # ----------------------------------------------------
 # Load a pre-trained RoBERTa model fine-tuned for emotion classification
 
-model = AutoModelForSequenceClassification.from_pretrained("./model")
+model = AutoModelForSequenceClassification.from_pretrained('./model')
 
 model.eval()  # switch to inference mode (disable dropout etc.)
 
@@ -154,14 +153,41 @@ top2_emotion = id2label[top2_idx]
 top1_prob = probabilities[top1_idx].item()
 top2_prob = probabilities[top2_idx].item()
 
-print()
-print(f'Primary emotion:   {top1_emotion} ({top1_prob * 100:.1f}%)')
-print(f'Secondary emotion: {top2_emotion} ({top2_prob * 100:.1f}%)')
-print()
+if(DEBUG):
+    print(f'\nPrimary emotion:   {top1_emotion} ({top1_prob * 100:.1f}%)')
+    print(f'\nSecondary emotion: {top2_emotion} ({top2_prob * 100:.1f}%)\n')
 
 if(0):
-    tokenizer.save_pretrained("./model")
-    model.save_pretrained("./model")
+    tokenizer.save_pretrained('./model')
+    model.save_pretrained('./model')
 
-print(f'Job finished')
+###############################################################
+
+
+# ====================================================
+# STAGE 4. EMOTION-TO-COLOR MAPPING (Plutchik Wheel)
+# ====================================================
+
+emotion_colors = {
+    'anger':    '#FF0000',  # Red — aggression
+    'disgust':  '#8B4513',  # Brown — repulsion
+    'fear':     '#4B0082',  # Purple — anxiety
+    'joy':      '#FFD700',  # Gold/Yellow — happiness
+    'neutral':  '#808080',  # Grey — neutrality
+    'sadness':  '#0000FF',  # Blue — sorrow
+    'surprise': '#FFA500',  # Orange — astonishment
+}
+
+primary_color = emotion_colors[top1_emotion]
+secondary_color = emotion_colors[top2_emotion]
+
+print('=' * 60)
+print('COLOR MAPPING')
+print('=' * 60)
+print(f'Primary:   {top1_emotion:<10s} -> {primary_color}  ({top1_prob * 100:.1f}%)')
+print(f'Secondary: {top2_emotion:<10s} -> {secondary_color}  ({top2_prob * 100:.1f}%)')
+
+
+
+print(f'\nJob finished')
 
