@@ -22,27 +22,13 @@ from analyze_emotions import analyze_emotions
 
 st.set_page_config(page_title="Text Emotion Visualizer", layout="centered")
 
-EMOTION_COLORS = {
-    'anger':    '#FF0000',
-    'disgust':  '#8B4513',
-    'fear':     '#4B0082',
-    'joy':      '#FFD700',
-    'neutral':  '#808080',
-    'sadness':  '#0000FF',
-    'surprise': '#FFA500',
-}
+title_colors = ["#FF0000", "#FFD700", "#0000FF"]  # anger, joy, sadness
+words = "Text Emotion Visualizer".split()
 
-colors = list(EMOTION_COLORS.values())
-title = "Text Emotion Visualizer"
-
-words = title.split()
-emotion_names = list(EMOTION_COLORS.keys())
 word_spans = []
-for i, word in enumerate(words):
-    color = colors[i % len(colors)]
-    label = emotion_names[i % len(emotion_names)]
+for word, color in zip(words, title_colors):
     word_spans.append(
-        f'<span title="{label}" style="color:{color}; cursor:help;">{word}</span>'
+        f'<span style="color:{color};">{word}</span>'
     )
 
 st.markdown(
