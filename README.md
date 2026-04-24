@@ -1,3 +1,10 @@
+![Text Emotion Visualizer](logo_emotion.png)
+
+---
+
+
+<!-- Text Emotion Visualizer -->
+
 # $\color{red}{\textsf{Text}}$ $\color{gold}{\textsf{Emotion}}$ $\color{blue}{\textsf{Visualizer}}$
 
 **Text Emotion Visualizer** - a web application that transforms written text into emotion-driven color visualizations using Natural Language Processing.
